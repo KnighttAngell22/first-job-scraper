@@ -1,37 +1,20 @@
 name: Daily Scraper
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '30 3 * * *'
-  workflow_dispatch:
 
 jobs:
   scrape:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Set up Python
-      uses: actions/setup-python@v4
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v4
       with:
         python-version: '3.11'
-        
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-    
-    - name: Debug secrets
-      env:
-        DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
-        DISCORD_CHANNEL_ID: ${{ secrets.DISCORD_CHANNEL_ID }}
-      run: |
-        echo "Bot token length: ${#DISCORD_BOT_TOKEN}"
-        echo "Channel ID length: ${#DISCORD_CHANNEL_ID}"
-        
-    - name: Run scraper
-      env:
+    - run: pip install discord.py
+    - env:
         DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
         DISCORD_CHANNEL_ID: ${{ secrets.DISCORD_CHANNEL_ID }}
       run: python scraper.py
